@@ -8,6 +8,20 @@ const uuid= (process.env.UUID||'b9360587-8d2f-47a5-e93e-d1639b265de2').replace(/
 const port= process.env.PORT||3000;
 
 const wss=new WebSocket.Server({port},logcb('listen:', port));
+const HEARTBEAT_INTERVAL = 30 * 1000; 
+
+// 在连接后设置心跳
+ws.once('open', () => {
+  heartBeat();
+});
+
+// 心跳函数  
+function heartBeat() {
+  ws.ping();
+
+  // 递归调用
+  setTimeout(heartBeat, HEARTBEAT_INTERVAL);
+}
 wss.on('connection', ws=>{
     console.log("on connection")
     ws.once('message', msg=>{
@@ -30,17 +44,4 @@ wss.on('connection', ws=>{
         }).on('error',errcb('Conn-Err:',{host,port}));
     }).on('error',errcb('EE:'));
 });
-const HEARTBEAT_INTERVAL = 30 * 1000; 
 
-// 在连接后设置心跳
-ws.once('open', () => {
-  heartBeat();
-});
-
-// 心跳函数  
-function heartBeat() {
-  ws.ping();
-
-  // 递归调用
-  setTimeout(heartBeat, HEARTBEAT_INTERVAL);
-}
