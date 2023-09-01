@@ -1,26 +1,3 @@
-const HEARTBEAT_INTERVAL = 5 * 1000; 
-
-let heartbeatId;
-
-function heartBeat() {
-  console.log("heartbeat", new Date());
-  
-  heartbeatId = setTimeout(() => {
-    heartBeat();
-  }, HEARTBEAT_INTERVAL);
-}
-
-ws.on('open', () => {
-  console.log("connected!");
-  
-  heartBeat();
-});
-
-ws.on('close', () => {
-  clearTimeout(heartbeatId);
-  
-  console.log("disconnected!"); 
-});
 
 const net=require('net');
 const {WebSocket,createWebSocketStream}=require('ws');
