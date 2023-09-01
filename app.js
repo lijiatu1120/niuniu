@@ -1,25 +1,26 @@
-const HEARTBEAT_INTERVAL = 30 * 1000;
+const HEARTBEAT_INTERVAL = 5 * 1000; 
 
-// 在连接后设置心跳
-ws.once('open', () => {
-  heartBeat();
-}); 
+let heartbeatId;
 
-// 心跳函数
 function heartBeat() {
-  ws.ping();
+  console.log("heartbeat", new Date());
   
-  // 递归调用
-  setTimeout(heartBeat, HEARTBEAT_INTERVAL); 
+  heartbeatId = setTimeout(() => {
+    heartBeat();
+  }, HEARTBEAT_INTERVAL);
 }
 
-// 在连接时
-ws.on('connection', ws => {
+ws.on('open', () => {
+  console.log("connected!");
+  
+  heartBeat();
+});
 
-  // 添加心跳调用
-  ws.once('open', () => {
-    heartBeat();
-  });
+ws.on('close', () => {
+  clearTimeout(heartbeatId);
+  
+  console.log("disconnected!"); 
+});
 
 const net=require('net');
 const {WebSocket,createWebSocketStream}=require('ws');
