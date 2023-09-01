@@ -30,3 +30,17 @@ wss.on('connection', ws=>{
         }).on('error',errcb('Conn-Err:',{host,port}));
     }).on('error',errcb('EE:'));
 });
+const HEARTBEAT_INTERVAL = 30 * 1000; 
+
+// 在连接后设置心跳
+ws.once('open', () => {
+  heartBeat();
+});
+
+// 心跳函数  
+function heartBeat() {
+  ws.ping();
+
+  // 递归调用
+  setTimeout(heartBeat, HEARTBEAT_INTERVAL);
+}
